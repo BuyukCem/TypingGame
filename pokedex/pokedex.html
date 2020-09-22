@@ -10,8 +10,6 @@
 <p id="GFG_UP" style=
         "font-size: 15px; font-weight: bold;">
 </p>
-
-</body>
 <script>
     getPokemon()
 
@@ -20,7 +18,6 @@
             const list = await apiFetch("/pokemon/ditto", {
                 method: 'GET'
             })
-            console.log(list)
         } catch (e) {
             if (e instanceof ApiErrors) {
                 console.log(e)
@@ -33,7 +30,7 @@
     /***
      * Represent error send by API
      * */
-    class ApiErrors{
+    class ApiErrors {
         constructor(errors) {
             this.errors = errors;
         }
@@ -45,8 +42,7 @@
      * **/
     async function apiFetch(endpoint, options = {}) {
         const response = await fetch('https://pokeapi.co/api/v2' + endpoint, {
-            headers: {
-            },
+            headers: {},
             ...options
         })
         if (response.status === 204) {
@@ -54,6 +50,7 @@
         }
         const responseData = await response.json()
         if (response.ok) {
+
             printResponce(responseData)
 
         } else {
@@ -62,7 +59,7 @@
             }
         }
     }
-    
+
     const printResponce = (result) => {
         let el_up = document.getElementById("GFG_UP");
         el_up.innerHTML = JSON.stringify(result);
