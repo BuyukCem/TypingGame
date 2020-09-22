@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TypingGame</title>
+</head>
+
+<body>
+<p id="point"></p>
+<p id="typingWord"></p>
+<p id="time"></p>
+<p id="regle"></p>
+<br>
+<input type="text" id="text">
+
+<script>
+    let score = 0
+    let randomWord = ""
+    let typingWord = document.getElementById("typingWord")
+    let compteur = 0
+
+    /***
+     *  @return {string} return random word
+     */
+    const getRandomWord = () => {
+        const arrayDirectory = ["maison", "voiture", "personne", "bus"]
+        let botIndex = Math.floor(Math.random() * arrayDirectory.length);
+        console.log("random word: " + arrayDirectory[botIndex])
+        return arrayDirectory[botIndex];
+    }
+
+    /**
+     * @param {string}  firstWord
+     * @param {string} secondWord
+     * @return {boolean} return boolean
+     */
+    const compareWord = (firstWord, secondWord) => {
+        console.log("firstWord " + firstWord)
+        console.log("secondWord " + secondWord)
+        return firstWord === secondWord
+    }
+
+
+    /***
+     *  This function generate new word and reset time
+     * */
+    const generateWord = () => {
+
+        randomWord = getRandomWord()
+        document.getElementById("typingWord").innerHTML = ""
+        let text = document.createTextNode("Texte à écrire: " + randomWord)
+        typingWord.appendChild(text)
+        compteur = 0
+        let point = document.getElementById("point")
+        document.getElementById("point").innerHTML = ""
+        let writepoint = document.createTextNode("Nb point: " + score)
+        point.appendChild(writepoint)
+
+
+    }
+
+    generateWord()
+    let timeInterval = setInterval(() => {
+        generateWord()
+    }, 10000);
+
+    /***
+     *  This function generate word Compteur
+     * */
+    let wordcompteur = setInterval(() => {
+        let time = document.getElementById("time")
+        document.getElementById("time").innerHTML = ""
+        let writetime = document.createTextNode("Time: " + compteur)
+        time.appendChild(writetime)
+        compteur = compteur + 1
+    }, 1000)
+
+    document.body.addEventListener("keyup", function (e) {
+        if (e.keyCode === 32) {
+            let inputString = document.getElementById('text')
+            if (compareWord(randomWord, inputString.value.trim())) {
+                score++
+                document.getElementById("text").value = ""
+                generateWord()
+            } else {
+                clearInterval(timeInterval)
+                clearInterval(wordcompteur)
+                let regle = document.getElementById("regle")
+                document.getElementById("regle").innerHTML = ""
+                let writeregle = document.createTextNode("You lose please reset page ctr + R")
+                regle.appendChild(writeregle)
+            }
+        }
+    })
+
+</script>
+</body>
+</html>
