@@ -17,7 +17,7 @@
 <script>
     let score = 0
     let randomWord = ""
-    let typingWord = document.getElementById("typingWord")
+    const typingWord = document.getElementById("typingWord")
     let compteur = 0
 
     /***
@@ -61,14 +61,14 @@
     }
 
     generateWord()
-    let timeInterval = setInterval(() => {
+    const timeInterval = setInterval(() => {
         generateWord()
     }, 10000);
 
     /***
      *  This function generate word Compteur
      * */
-    let wordcompteur = setInterval(() => {
+    const wordcompteur = setInterval(() => {
         let time = document.getElementById("time")
         document.getElementById("time").innerHTML = ""
         let writetime = document.createTextNode("Time: " + compteur)
@@ -88,7 +88,7 @@
                 clearInterval(wordcompteur)
                 let regle = document.getElementById("regle")
                 document.getElementById("regle").innerHTML = ""
-                let writeregle = document.createTextNode("You lose please reset page ctr + R")
+                const writeregle = document.createTextNode("You lose please reset page ctr + R")
                 regle.appendChild(writeregle)
             }
         }
