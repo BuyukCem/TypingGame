@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <title>TicTacToe</title>
+    <link href="style.css" rel="stylesheet">
+</head>
+
+<body>
+<canvas id="canvas" width="500" height="500"></canvas>
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <p>Vous souhaitez jouer avec: </p>
+        <form id="myForm">
+            <div>
+                <input type="radio" id="friend" name="choix" value="friend">
+                <label for="friend">Avec un amis</label>
+                <input type="radio" id="solo" name="choix" value="solo">
+                <label for="solo">En solo </label>
+                <br>
+                <br>
+            </div>
+            <div>
+                <input type="button" onclick="sendValue()" value="Valider">
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+
+    let userchoise = ""
+    //Should be scalable, but it uses default elements for calculations and tracking
+    let canvas = document.getElementById("canvas");
+    let ctx = canvas.getContext("2d");
+    const width = canvas.width;
+    const blockSize = canvas.width / 3;
+    const lineSize = blockSize / 15;
+    //Uses an array so a forEach loop can scan it for the correct tile
+    let tileArray = []; //Contains all tiles
+    let available = []; //Contains only available tiles
+    let statPlayer = 1
+    let winner = 0
+    //All helper functions
+    isBetween = (num, a, b) => {
+        return num >= a && num <= b;
+    }
+
+    //Checks if every value in an array equals an item
+    equals = (arr, item) => {
+        return arr.filter(a => {
+            return a === item;
+        }).length === arr.length;
+    }
+
+
+    class grid {
+        constructor(x, y) {
+            this.x = x * blockSize;
+            this.y = y * blockSize;
+            this.state = "none";
+            tileArray.push(this);
+            available.push(this);
+        }
+
+        draw() {
+            ctx.lineWidth = blockSize / 15;
+            if (statPlayer === 1) {
+                ctx.beginPath();
+                ctx.moveTo(this.x + blockSize / 4, this.y + blockSize / 4);
+                ctx.lineTo(this.x + blockSize / (4 / 3), this.y + blockSize / (4 / 3));
+                ctx.moveTo(this.x + blockSize / 4, this.y + blockSize / (4 / 3));
+                ctx.lineTo(this.x + blockSize / (4 / 3), this.y + blockSize / 4);
+                ctx.stroke();
+                statPlayer = 2
+            } else if (statPlayer === 2) {
+                ctx.beginPath();
+                ctx.arc(this.x + blockSize / 2, this.y + blockSize / 2, blockSize / 4, 0, 2 * Math.PI);
+                ctx.stroke();
+                statPlayer = 1
+            }
+
+            //Removes this from the available array
+            const ind = available.indexOf(this);
+            available = available.slice(0, ind).concat(available.slice(ind + 1, available.length));
+        }
+    }
+
+    //Generates tiles
+    for (let x = 0; x < 3; x++) {
+        for (let y = 0; y < 3; y++) {
+            new grid(x, y);
+        }
+    }
+
+    //Draws the setup for the game
+    ctx.fillStyle = "rgb(255,255,255)";
+    ctx.fillRect(0, 0, 500, 500);
+
+    //Draws the lines
+    ctx.fillStyle = "rgb(200, 200, 200)";
+    ctx.fillRect(blockSize - lineSize / 2, 0, lineSize, width);
+    ctx.fillRect(blockSize * 2 - lineSize / 2, 0, lineSize, width);
+    ctx.fillRect(0, blockSize - lineSize / 2, width, lineSize);
+    ctx.fillRect(0, blockSize * 2 - lineSize / 2, width, lineSize);
+
+    getMousePosition = (event) => {
+        let rect = canvas.getBoundingClientRect();
+        return {
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top
+        }
+    }
+
+    const checkCondition = () => {
+        //Local variables are created to make access easier
+        let as = tileArray[0].state;
+        let bs = tileArray[1].state;
+        let cs = tileArray[2].state;
+        let ds = tileArray[3].state;
+        let es = tileArray[4].state;
+        let fs = tileArray[5].state;
+        let gs = tileArray[6].state;
+        let hs = tileArray[7].state;
+        let is = tileArray[8].state;
+
+        //Equals function checks if each value in the array has a state of X or O
+        if (equals([as, bs, cs], 1) || equals([ds, es, fs], 1) || equals([gs, hs, is], 1) ||
+            equals([as, ds, gs], 1) || equals([bs, es, hs], 1) || equals([cs, fs, is], 1) ||
+            equals([as, es, is], 1) || equals([cs, es, gs], 1)) {
+            alert("Player wins!");
+
+        } else if (equals([as, bs, cs], 2) || equals([ds, es, fs], 2) || equals([gs, hs, is], 2) ||
+            equals([as, ds, gs], 2) || equals([bs, es, hs], 2) || equals([cs, fs, is], 2) ||
+            equals([as, es, is], 2) || equals([cs, es, gs], 2)) {
+            alert("Opponent wins!");
+
+            //It is a tie if none of the above conditions are fulfilled and there are no available tiles
+        } else if (available.length === 0) {
+            alert("It's a tie!");
+        }
+    }
+    const sendValue = () => {
+        if (document.getElementById('friend').checked) {
+            userchoise = document.getElementById('friend').value;
+        }
+        if (document.getElementById('solo').checked) {
+            userchoise = document.getElementById('solo').value;
+        }
+        modal.style.display = "none";
+        play()
+    }
+
+    const modal = document.getElementById("myModal");
+    window.addEventListener("DOMContentLoaded", (event) => {
+        modal.style.display = "block";
+    });
+
+    const playCenter = (es) => {
+        if (es === "none") {
+            return true
+        }
+        {
+            return false
+        }
+    }
+
+    isBetween = (num, a, b) => {
+        return num >= a && num <= b;
+    }
+
+    function play() {
+        if (userchoise === 'friend') {
+            canvas.addEventListener('mouseup', function (event) {
+                let position = getMousePosition(event)
+                tileArray.forEach(grid => {
+                    if (isBetween(position.x, grid.x, grid.x + blockSize) && isBetween(position.y, grid.y, grid.y + blockSize)) {
+
+                        console.log(available.indexOf(grid))
+                        if (available.indexOf(grid) !== -1) {
+                            grid.state = statPlayer;
+                            grid.draw();
+                            checkCondition()
+                        }
+                    }
+                });
+
+            });
+        }
+
+        if (userchoise === "solo") {
+            while (winner === 0) {
+                if (statPlayer === 1) {
+                    canvas.addEventListener('mouseup', function (event) {
+                        let position = getMousePosition(event)
+                        tileArray.forEach(grid => {
+                            if (isBetween(position.x, grid.x, grid.x + blockSize) && isBetween(position.y, grid.y, grid.y + blockSize)) {
+                                console.log(available.indexOf(grid))
+                                if (available.indexOf(grid) !== -1) {
+                                    grid.state = statPlayer;
+                                    grid.draw();
+                                    checkCondition()
+                                }
+                            }
+                        });
+
+                    });
+                } else if (statPlayer === 2) {
+
+                }
+            }
+
+        }
+    }
+
+</script>
+</body>
+</html>
